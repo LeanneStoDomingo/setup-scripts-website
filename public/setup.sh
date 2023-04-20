@@ -40,7 +40,8 @@ print_color() {
 }
 
 read -rp "Enter bitwarden email: " BW_CLI_EMAIL
-read -rp "Enter bitwarden password: " BW_CLI_PASS
+read -rsp "Enter bitwarden password: " BW_CLI_PASS
+echo
 
 print_color bgreen "Updating..."
 sudo apt update
@@ -61,13 +62,14 @@ rm -rf "${BW_CLI_ZIP_FILE_NAME}" bw
 BW_NOTE_NAME="Linux Setup Script"
 
 print_color bgreen "Logging into bitwarden cli..."
-bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}"
 BW_SESSION=$(bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}" | grep -oP '(?<=BW_SESSION=")[^"]+')
 
 # outputs the following variables: GIT_USER_NAME, GIT_USER_EMAIL
 eval "$(bw get item "${BW_NOTE_NAME}" --session "${BW_SESSION}" | jq -r '.fields[] | "declare \(.name)=\"\(.value)\""')"
 
 # TODO: set up ssh keys
+
+# TODO: check to make sure vars from bw are set and if not, prompt for them (or skip)
 
 print_color bgreen "Configuring git..."
 git config --global user.name "${GIT_USER_NAME}"
