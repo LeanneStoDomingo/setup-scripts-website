@@ -1,29 +1,36 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
-const scriptCommand = 'curl -fsSL https://setup-scripts-website.vercel.app/setup.sh | bash'
+const scriptCommand =
+  "curl -fsSL https://setup-scripts-website.vercel.app/setup.sh | bash";
 ---
 
 <Layout title="Setup Scripts">
-	<main class="flex flex-col justify-items-center items-center">
-		<h1 class="scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl text-center p-2">Setup Scripts</h1>
-		<div class="cursor-pointer rounded bg-zinc-300 hover:bg-zinc-200 p-5 flex max-w-3xl content-center justify-around gap-5 m-5">
-			<p id="command" class="font-mono">{scriptCommand}</p>
-			<img src='/copy.svg' alt="copy icon" />
-		</div>
-	</main>
+  <main class="flex flex-col items-center justify-items-center">
+    <h1
+      class="scroll-m-20 p-2 text-center text-4xl font-bold tracking-tight lg:text-5xl"
+    >
+      Setup Scripts
+    </h1>
+    <div
+      class="m-5 flex max-w-3xl cursor-pointer content-center justify-around gap-5 rounded bg-zinc-300 p-5 hover:bg-zinc-200"
+    >
+      <p id="command" class="font-mono">{scriptCommand}</p>
+      <img src="/copy.svg" alt="copy icon" />
+    </div>
+  </main>
 </Layout>
 
-<script define:vars={{scriptCommand}}>
-    const command = document.getElementById('command');
+<script define:vars={{ scriptCommand }}>
+  const command = document.getElementById("command");
 
-    command.addEventListener('click', async () => {
-      await navigator.clipboard.writeText(command.innerText);
+  command.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(command.innerText);
 
-      command.innerText = 'Copied to clipboard!';
+    command.innerText = "Copied to clipboard!";
 
-      setTimeout(() => {
-        command.innerText = scriptCommand;
-      }, 1000);
-    });
+    setTimeout(() => {
+      command.innerText = scriptCommand;
+    }, 1000);
+  });
 </script>
