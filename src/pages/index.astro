@@ -2,7 +2,8 @@
 import ClickToCopy from "../components/ClickToCopy.astro";
 
 const scripts = {
-  Linux: "curl -fsSL https://setup-scripts-website.vercel.app/setup.sh | bash",
+  Linux:
+    '/bin/bash -c "$(curl -fsSL https://setup-scripts-website.vercel.app/setup.sh)"',
 };
 ---
 
