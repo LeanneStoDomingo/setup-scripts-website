@@ -39,13 +39,16 @@ print_color() {
     echo -e "${color}$2${Color_Off}"
 }
 
+read -rp "Enter bitwarden email: " BW_CLI_EMAIL
+read -rp "Enter bitwarden password: " BW_CLI_PASS
+
 print_color bgreen "Updating..."
 sudo apt update
 sudo apt upgrade -y
 sudo apt autoremove -y
 
 print_color bgreen "Installing packages..."
-sudo apt install wget unzip curl git gh -y
+sudo apt install wget unzip curl jq git gh -y
 
 BW_CLI_ZIP_FILE_NAME="bw-cli.zip"
 
@@ -55,12 +58,20 @@ unzip "${BW_CLI_ZIP_FILE_NAME}"
 sudo install bw /usr/local/bin/
 rm -rf "${BW_CLI_ZIP_FILE_NAME}" bw
 
-# TODO: log in to bitwarden cli
+BW_NOTE_NAME="Linux Setup Script"
+
+print_color bgreen "Logging into bitwarden cli..."
+bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}"
+BW_SESSION=$(bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}" | grep -oP '(?<=BW_SESSION=")[^"]+')
+
+# outputs the following variables: GIT_USER_NAME, GIT_USER_EMAIL
+eval "$(bw get item "${BW_NOTE_NAME}" | jq -r '.fields[] | "declare \(.name)=\"\(.value)\""')"
+
+# TODO: set up ssh keys
 
 print_color bgreen "Configuring git..."
-# TODO: finish git configuration
-# git config --global user.name ""
-# git config --global user.email ""
+git config --global user.name "${GIT_USER_NAME}"
+git config --global user.email "${GIT_USER_EMAIL}"
 git config --global core.editor "code --wait"
 git config --global init.defaultBranch main
 
@@ -73,11 +84,16 @@ print_color bgreen "Installing fnm..."
 if [[ $(which fnm) == '' ]]; then
     curl -fsSL https://fnm.vercel.app/install | bash
     # TODO: add bash completion
+
+    # shellcheck source=/dev/null
     source ~/.bashrc
 else
     print_color byellow "\tAlready installed, upgrading instead..."
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
 fi
 fnm install --latest
+
+print_color bgreen "Logging out of bitwarden cli..."
+bw logout
 
 print_color bgreen "Finished!"
