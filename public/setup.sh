@@ -65,7 +65,7 @@ bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}"
 BW_SESSION=$(bw login "${BW_CLI_EMAIL}" "${BW_CLI_PASS}" | grep -oP '(?<=BW_SESSION=")[^"]+')
 
 # outputs the following variables: GIT_USER_NAME, GIT_USER_EMAIL
-eval "$(bw get item "${BW_NOTE_NAME}" | jq -r '.fields[] | "declare \(.name)=\"\(.value)\""')"
+eval "$(bw get item "${BW_NOTE_NAME}" --session "${BW_SESSION}" | jq -r '.fields[] | "declare \(.name)=\"\(.value)\""')"
 
 # TODO: set up ssh keys
 
