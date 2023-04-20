@@ -1,0 +1,44 @@
+---
+import CopyIcon from "./CopyIcon.astro";
+
+export interface Props {
+  os: string;
+  scriptCommand: string;
+}
+
+const { os, scriptCommand } = Astro.props;
+
+const commandId = `command-${os}`;
+const notificationId = `notification-${os}`;
+---
+
+<div class="flex flex-col items-center gap-3">
+  <h2
+    class="scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+  >
+    {os}
+  </h2>
+  <div
+    id={commandId}
+    class="flex max-w-3xl cursor-pointer content-center justify-around gap-5 rounded bg-zinc-300 p-5 shadow duration-300 ease-in-out hover:scale-[1.015] hover:bg-zinc-200"
+  >
+    <code>{scriptCommand}</code>
+    <CopyIcon />
+  </div>
+  <div id={notificationId} class="invisible">Copied to clipboard!</div>
+</div>
+
+<script define:vars={{ commandId, notificationId }}>
+  const command = document.getElementById(commandId);
+  const notification = document.getElementById(notificationId);
+
+  command.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(command.innerText);
+
+    notification.classList.remove("invisible");
+
+    setTimeout(() => {
+      notification.classList.add("invisible");
+    }, 1000);
+  });
+</script>
